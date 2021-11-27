@@ -1,4 +1,4 @@
-# findr
+# zind
 Walk a filesystem with configurable path and filename filters.
 
 
@@ -34,7 +34,7 @@ $ zind -g py
 ```
 
 # Cli Usage
-Filesystem files and directories can be filtered based on input tokens. `-g` <text> will only return lines with matching text. `-ge` <text> will exclude lines with matching text. `-gr` <text> will use regex matching to include text. `-gc` will enforce case sensitive matches. The options can be mix and matched. `-gre .*.py$` will exclude all files ending in .py.
+Filesystem files and directories can be filtered based on input tokens. `-g` <text> will only return lines with matching text. `-ge` <text> will exclude lines with matching text. `-gr` <text> will use regex matching to include text. `-gc` will enforce case sensitive matches. The options can be mix and matched. `-gre ".*.py$"` will exclude all files ending in .py.
   
 Files can be scanned line by line as well. `-t` <text> will cause the tool to print matching lines within files that contain the matching text. `-te` will exclude  matching lines in text.
 

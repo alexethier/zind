@@ -15,11 +15,17 @@ for root, dirs, files in os.walk("." + os.path.sep + project_name, topdown=True,
 #print(found_packages)
 #print(found_package_dirs)
 
+from pathlib import Path
+this_directory = Path(__file__).parent
+long_description = (this_directory / "README.md").read_text()
+
 setup(
   name=project_name,
-  version='0.0.8',
+  version='0.1.0',
   description='Walk a filesystem with configurable path and filename filters.',
-  url='https://github.com/alexethier/findr',
+  long_description=long_description,
+  long_description_content_type='text/markdown',
+  url='https://github.com/alexethier/zind',
   author='Alex Ethier',
   author_email='aethier@gmail.com',
   license='MIT',
