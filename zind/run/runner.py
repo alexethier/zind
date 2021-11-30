@@ -23,7 +23,8 @@ class Runner:
     find = Find()
     text_find = TextFind()
 
-    file_matches = find.find(".", file_filter_tokens)
+    scan_directory = loader.get_directory()
+    file_matches = find.find(scan_directory, file_filter_tokens)
 
     for file_match in file_matches:
       if(len(loader.get_text_tokens()) == 0):

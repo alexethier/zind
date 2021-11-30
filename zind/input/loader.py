@@ -8,6 +8,7 @@ class Loader:
   def __init__(self):
     self._file_filter_tokens = []
     self._text_tokens = []
+    self._directory = "."
 
   def print_arg_error(self, bad_arg):
     print("Error: Unknown input argument: " + bad_arg)
@@ -15,6 +16,7 @@ class Loader:
   def print_help(self):
     print("Usage: [-g INCLUSIVE_MATCH ] ")
     print("       [-ge EXCLUSIVE_MATCH ] ")
+    print("       [-d directory ] ")
 
   def run(self):
 
@@ -24,6 +26,7 @@ class Loader:
 
     input_file_key = None
     input_text_key = None
+    input_directory = False
     index = 1
     for index in range(1, len(sys.argv)):
       arg = sys.argv[index]
@@ -44,6 +47,9 @@ class Loader:
           return False
         else:
           input_text_key = None
+      elif(input_directory):
+        self._directory = arg
+        input_directory = False
       elif(arg.startswith('-g')):
         input_file_key = arg[2:]
       elif(arg.startswith('--g')):
@@ -60,6 +66,8 @@ class Loader:
         logging.getLogger().setLevel(logging.DEBUG)
       elif(arg.startswith('-v')):
         logging.getLogger().setLevel(logging.INFO)
+      elif(arg.startswith('-d')):
+        input_directory = True
       else:
         self.print_arg_error(arg)
         self.print_help()
@@ -119,3 +127,6 @@ class Loader:
 
   def get_text_tokens(self):
     return self._text_tokens
+
+  def get_directory(self):
+    return self._directory
