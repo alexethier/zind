@@ -14,10 +14,18 @@ class Find:
     for matcher_filter_token in matcher_filter_exclude_list:
       token = matcher_filter_token.get_token()
       is_regex = matcher_filter_token.is_regex()
+      is_case_sensitive = matcher_filter_token.is_case_sensitive()
+
+      cased_matcher = matcher
+      cased_token = token
+      if(not is_case_sensitive):
+        cased_matcher = matcher.lower()
+        cased_token = token.lower()
+
       if(is_regex):
-        if(re.match(token, matcher)):
+        if(re.match(cased_token, cased_matcher)):
           return False
-      elif token in matcher:
+      elif cased_token in cased_matcher:
         return False
 
     if(len(matcher_filter_include_list) == 0):
@@ -26,10 +34,18 @@ class Find:
     for matcher_filter_token in matcher_filter_include_list:
       token = matcher_filter_token.get_token()
       is_regex = matcher_filter_token.is_regex()
+      is_case_sensitive = matcher_filter_token.is_case_sensitive()
+
+      cased_matcher = matcher
+      cased_token = token
+      if(not is_case_sensitive):
+        cased_matcher = matcher.lower()
+        cased_token = token.lower()
+
       if(is_regex):
-        if(not re.match(token, matcher)):
+        if(not re.match(cased_token, cased_matcher)):
           return False
-      elif token not in matcher:
+      elif cased_token not in cased_matcher:
         return False
 
     return True

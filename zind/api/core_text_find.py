@@ -73,5 +73,5 @@ class TextFind:
 
           if(all_match):
             yield line
-    except UnicodeDecodeError:
+    except (UnicodeDecodeError, FileNotFoundError):
       pass
