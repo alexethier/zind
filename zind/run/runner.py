@@ -10,29 +10,34 @@ class Runner:
 
   def run(self):
 
-    loader = Loader()
-    continue_run = loader.run()
-    if(not continue_run):
-      return
+    try:
 
-    file_filter_tokens = loader.get_file_filter_tokens()
-    for file_filter_token in file_filter_tokens:
-      logging.debug("File filter token: " + str(file_filter_token))
-      
+      loader = Loader()
+      continue_run = loader.run()
+      if(not continue_run):
+        return
 
-    find = Find()
-    text_find = TextFind()
+      file_filter_tokens = loader.get_file_filter_tokens()
+      for file_filter_token in file_filter_tokens:
+        logging.debug("File filter token: " + str(file_filter_token))
+        
 
-    scan_directory = loader.get_directory()
-    file_matches = find.find(scan_directory, file_filter_tokens)
+      find = Find()
+      text_find = TextFind()
 
-    for file_match in file_matches:
-      if(len(loader.get_text_tokens()) == 0):
-        print(file_match)
-      elif(not file_match.endswith('/')):
-        lines = text_find.scan(file_match, loader.get_text_tokens())
-        for line in lines:
-          print(file_match + ": " + line.rstrip())
+      scan_directory = loader.get_directory()
+      file_matches = find.find(scan_directory, file_filter_tokens)
+
+      for file_match in file_matches:
+        if(len(loader.get_text_tokens()) == 0):
+          print(file_match)
+        elif(not file_match.endswith('/')):
+          lines = text_find.scan(file_match, loader.get_text_tokens())
+          for line in lines:
+            print(file_match + ": " + line.rstrip())
+
+    except KeyboardInterrupt:
+      pass
 
 def main():
   runner = Runner()
