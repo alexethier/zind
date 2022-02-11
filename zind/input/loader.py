@@ -9,14 +9,33 @@ class Loader:
     self._file_filter_tokens = []
     self._text_tokens = []
     self._directory = "."
+    self._output_mode = None # Options are 'filepath', 'filepath-force' or 'filecontent'
 
   def print_arg_error(self, bad_arg):
     print("Error: Unknown input argument: " + bad_arg)
 
   def print_help(self):
-    print("Usage: [-g INCLUSIVE_MATCH ] ")
-    print("       [-ge EXCLUSIVE_MATCH ] ")
-    print("       [-d directory ] ")
+    print("Basic Usage: ")
+    print("\t\t[-g INCLUSIVE_MATCH ] \t# Include filepaths with matching pattern.")
+    print("\t\t[-ge EXCLUSIVE_MATCH ] \t# Exclude filepaths with matching pattern.")
+    print("\t\t[-t EXCLUSIVE_MATCH ] \t# Include filepaths containing matching text.")
+    print("\t\t[-te EXCLUSIVE_MATCH ] \t# Exclude filepaths containing matching text.")
+    print("\t\t[-d directory ] \t# Directory to run in.")
+    print("\t\t[-ha ] \t\t\t# Print advanced usage.")
+
+  def print_advanced_help(self):
+    self.print_help()
+    print()
+    print("Advanced Usage: ")
+    print("\t\t[-g<erfc> MATCH_TOKEN ] \t# Prints matching filepaths.")
+    print("\t\t[-t<erfc> MATCH_TOKEN ] \t# Prints lines within files that match.")
+    print("\t\t[-k ] \t# Keep output as filename only.")
+    print("Optional argument modifiers")
+    print("Options -g and -t can have extra arguments to form an advanced argument, e.g. '-gfce token'): ")
+    print("\t\t e \t# Exclude instead of include matches.")
+    print("\t\t r \t# Match regex pattern instead of text match.")
+    print("\t\t c \t# Case sensitive matches.")
+    print("\t\t f \t# Match filename only.")
 
   def run(self):
 
@@ -61,6 +80,9 @@ class Loader:
       elif(arg == '-h' or arg == '--help'):
         self.print_help()
         return False
+      elif(arg == '-ha' or arg == '--help-advanced'):
+        self.print_advanced_help()
+        return False
       # Must check '-vv' before '-v'
       elif(arg.startswith('-vv')):
         logging.getLogger().setLevel(logging.DEBUG)
@@ -68,10 +90,15 @@ class Loader:
         logging.getLogger().setLevel(logging.INFO)
       elif(arg.startswith('-d')):
         input_directory = True
+      elif(arg.startswith('-k')):
+        self._output_mode = "filepath-force"
       else:
         self.print_arg_error(arg)
         self.print_help()
         return False
+
+    if(self._output_mode is None or len(self._text_tokens) == 0):
+      self._output_mode = "filepath"
       
     if(input_file_key is not None):
       print("Error: match token must follow expression '" + sys.argv[index] + "'")
@@ -110,6 +137,8 @@ class Loader:
     inclusive = True
     regex = False
     case_sensitive = False
+    if (self._output_mode is None):
+      self._output_mode = "filecontent"
 
     for char in input_chars:
       if(char == "e"):
@@ -124,6 +153,9 @@ class Loader:
     text_token = TextToken(token, inclusive, regex, case_sensitive)
     self._text_tokens.append(text_token)
     return True
+
+  def get_output_mode(self):
+    return self._output_mode
 
   def get_file_filter_tokens(self):
     return self._file_filter_tokens

@@ -6,6 +6,55 @@ class TextFind:
   def __init__(self):
     pass
 
+  def _check_match(self, line, text_map):
+    # First check for exclusions
+    skip = False
+    for text_token in text_map["exclusive"]:
+      case_sensitive = text_token.is_case_sensitive()
+      regex = text_token.is_regex()
+      check_token = text_token.get_token()
+      check_line = line
+      if(not case_sensitive):
+        check_line = line.lower()
+        check_token = check_token.lower()
+
+      if(not regex):
+        if(check_token in check_line):
+          skip = True
+          break
+      else:
+        if(re.match(check_token, check_line)):
+          skip = True
+          break
+
+    if(skip):
+      return False
+
+    # Next check all inclusions
+    #toggle = False
+    all_match = True
+    for text_token in text_map["inclusive"]:
+      case_sensitive = text_token.is_case_sensitive()
+      regex = text_token.is_regex()
+      check_token = text_token.get_token()
+      #is_toggle = text_token.is_toggle()
+      check_line = line
+      if(not case_sensitive):
+        check_line = line.lower()
+        check_token = check_token.lower()
+
+      if(not regex):
+        if(check_token not in check_line):
+          all_match = False
+          break
+      else:
+        if(not re.match(check_token, check_line)):
+          all_match = False
+          break
+
+    if(all_match):
+      return True
+
   # Read a file line by line and yield matching results.
   #
   # scan_file - A path to the file to process
@@ -28,50 +77,8 @@ class TextFind:
         lines = input_fd.readlines()
         for line in lines:
 
-          # First check for exclusions
-          skip = False
-          for text_token in text_map["exclusive"]:
-            case_sensitive = text_token.is_case_sensitive()
-            regex = text_token.is_regex()
-            check_token = text_token.get_token()
-            check_line = line
-            if(not case_sensitive):
-              check_line = line.lower()
-              check_token = check_token.lower()
-
-            if(not regex):
-              if(check_token in check_line):
-                skip = True
-                break
-            else:
-              if(re.match(check_token, check_line)):
-                skip = True
-                break
-
-          if(skip):
-            continue
-
-          # Next check all inclusions
-          all_match = True
-          for text_token in text_map["inclusive"]:
-            case_sensitive = text_token.is_case_sensitive()
-            regex = text_token.is_regex()
-            check_token = text_token.get_token()
-            check_line = line
-            if(not case_sensitive):
-              check_line = line.lower()
-              check_token = check_token.lower()
-
-            if(not regex):
-              if(check_token not in check_line):
-                all_match = False
-                break
-            else:
-              if(not re.match(check_token, check_line)):
-                all_match = False
-                break
-
-          if(all_match):
+          match = self._check_match(line, text_map)
+          if(match):
             yield line
     except (UnicodeDecodeError, FileNotFoundError):
       pass
