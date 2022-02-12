@@ -6,7 +6,7 @@ import logging
 class Runner:
 
   def __init__(self):
-    pass;
+    self._suppress_line_length = 2000
 
   def run(self):
 
@@ -29,23 +29,36 @@ class Runner:
       file_matches = find.find(scan_directory, file_filter_tokens)
 
       output_mode = loader.get_output_mode()
+
+      self._printed_warning = False
+
       for file_match in file_matches:
         if(output_mode.startswith("filepath")):
           if(output_mode == "filepath-force"):
-            # In this mode, there must be at least one matching line
-            lines = text_find.scan(file_match, loader.get_text_tokens())
-            for line in lines:
-              print(file_match)
-              break
+            if(not file_match.endswith('/')):
+              # In this mode, there must be at least one matching line
+              lines = text_find.scan(file_match, loader.get_text_tokens())
+              for line in lines:
+                self.print_line(file_match, loader)
+                break # Print the filename once
           else:
             print(file_match)
         elif(not file_match.endswith('/')):
           lines = text_find.scan(file_match, loader.get_text_tokens())
           for line in lines:
-            print(file_match + ": " + line.rstrip())
+            self.print_line(file_match + ": " + line.rstrip(), loader)
 
     except KeyboardInterrupt:
       pass
+
+  def print_line(self, text, loader):
+    if(len(text) < self._suppress_line_length or not loader.get_suppress_output()):
+      print(text)
+    elif(not self._printed_warning):
+      print()
+      print("[WARNING] Suppressed matching line because it was too long, disable this behavior with -s")
+      print()
+      self._printed_warning = True
 
 def main():
   runner = Runner()

@@ -10,6 +10,7 @@ class Loader:
     self._text_tokens = []
     self._directory = "."
     self._output_mode = None # Options are 'filepath', 'filepath-force' or 'filecontent'
+    self._suppress_output = True
 
   def print_arg_error(self, bad_arg):
     print("Error: Unknown input argument: " + bad_arg)
@@ -30,6 +31,7 @@ class Loader:
     print("\t\t[-g<erfc> MATCH_TOKEN ] \t# Prints matching filepaths.")
     print("\t\t[-t<erfc> MATCH_TOKEN ] \t# Prints lines within files that match.")
     print("\t\t[-k ] \t# Keep output as filename only.")
+    print("\t\t[-a ] \t# Do not suppress output.")
     print("Optional argument modifiers")
     print("Options -g and -t can have extra arguments to form an advanced argument, e.g. '-gfce token'): ")
     print("\t\t e \t# Exclude instead of include matches.")
@@ -92,6 +94,8 @@ class Loader:
         input_directory = True
       elif(arg.startswith('-k')):
         self._output_mode = "filepath-force"
+      elif(arg.startswith('-a')):
+        self._suppress_output = False
       else:
         self.print_arg_error(arg)
         self.print_help()
@@ -156,6 +160,9 @@ class Loader:
 
   def get_output_mode(self):
     return self._output_mode
+
+  def get_suppress_output(self):
+    return self._suppress_output
 
   def get_file_filter_tokens(self):
     return self._file_filter_tokens
