@@ -84,6 +84,9 @@ class Find:
     # Track which directories have already been visited to prevent infinite loops
     directory_map = {}
 
+    if(not os.path.isdir(scan_dir)):
+        print("[WARNING]: Input directory '" + scan_dir + "' is not a directory.")
+
     # Note 'topdown' must be true if excluding directories when using the os.walk function
     for root, dirs, files in os.walk(scan_dir, topdown=True, followlinks=True):
 
