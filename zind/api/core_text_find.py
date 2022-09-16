@@ -80,5 +80,7 @@ class TextFind:
           match = self._check_match(line, text_map)
           if(match):
             yield line
-    except (UnicodeDecodeError, FileNotFoundError):
+    except (UnicodeDecodeError, FileNotFoundError, OSError):
       pass
+    except (PermissionError):
+      print(f"Unabled to read {scan_file} due to permission denied error.")

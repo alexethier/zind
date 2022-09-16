@@ -1,4 +1,5 @@
 import os
+import sys
 import re
 
 # Filter files according to inclusion and exclusion rules. These rules follow a pattern similar to multiple grep commands piped together.
@@ -8,6 +9,12 @@ class Find:
 
   def __init__(self):
     pass
+
+  # This function does not always work
+  #def print_tmp(self, text):
+  #  print(text, end="\r")
+  #  sys.stdout.write('\x1b[2K')
+  #  sys.stdout.flush()
 
   def _check_match(self, matcher, matcher_filter_exclude_list, matcher_filter_include_list):
 
@@ -92,6 +99,8 @@ class Find:
 
       # Skip the first set of files if we are including specific directories
       for name in files:
+        #self.print_tmp(f"{root}/{name}")
+
         match = self._check_match(name, filter_map["filename"]["exclusive"], filter_map["filename"]["inclusive"])
         if(match):
           match = self._check_match(root + os.path.sep + name, filter_map["path"]["exclusive"], filter_map["path"]["inclusive"])
@@ -108,6 +117,8 @@ class Find:
           continue
         else:
           directory_map[abs_dirpath] = None
+
+        #self.print_tmp(f"{path}")
 
         # First check exclusions only because further checking is not required if the directly is excluded.
         match = self._check_match(path, filter_map["path"]["exclusive"], [])
